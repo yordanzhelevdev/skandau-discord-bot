@@ -27,13 +27,13 @@ client.on("message", async message => {
   
   //TODO: nastroeniq
   
-  if (message.content.startsWith(`${prefix} play`)) {
+  if (message.content.startsWith(`${prefix}play`)) {
     execute(message, serverQueue);
     return;
-  } else if (message.content.startsWith(`${prefix} skip`)) {
+  } else if (message.content.startsWith(`${prefix}skip`)) {
     skip(message, serverQueue);
     return;
-  } else if (message.content.startsWith(`${prefix} stop`)) {
+  } else if (message.content.startsWith(`${prefix}stop`)) {
     stop(message, serverQueue);
     return;
   } else {
@@ -43,6 +43,8 @@ client.on("message", async message => {
 
 async function execute(message, serverQueue) {
   const args = message.content.split(" ");
+
+  console.log(args);
 
   const voiceChannel = message.member.voice.channel;
   if (!voiceChannel)
@@ -56,11 +58,16 @@ async function execute(message, serverQueue) {
     );
   }
 
-  const skandauSongs = ["Skandau-Haivera","Skandau-Replay","Skandau-Mafia","TOTO H- ciganska svatba"];
-  
-  
-  
-  const songInfo = await ytdl.getInfo(skandauSongs[Math.floor(Math.random()* skandauSongs.length)]);
+  const skandauSongs = ['https://www.youtube.com/watch?v=M7KOMNDfims', 'https://www.youtube.com/watch?v=tKCgZa5VNn8','https://www.youtube.com/watch?v=loZJIzpZgS4','https://www.youtube.com/watch?v=f7DTcG0lFDo'];
+
+  const randomSong = skandauSongs[Math.floor(Math.random() * skandauSongs.length)];
+
+  // Math.floor(Math.random() * skandauSongs.length)
+  console.log(randomSong);
+  const songInfo = await ytdl.getInfo(randomSong);
+
+  // ['!!play', 'https://www.youtube.com/watch?v=M7KOMNDfims']
+ 
   
   const song = {
     title: songInfo.title,
