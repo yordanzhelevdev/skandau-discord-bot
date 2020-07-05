@@ -10,32 +10,25 @@ var welcomeScreen = {
 const client = new Discord.Client();
 const queue = new Map();
 
-
-
-  function Songs(id,name,link) {
-    this.id = id;
-    this.name = name;
-    this.link = link;
-  }
+function Songs(id,name,link) {
+  this.id = id;
+  this.name = name;
+  this.link = link;
+}
 
 try {
-   
     const data = fs.readFileSync('database.conf', 'UTF-8');
     var mySongs = []; // array ot songs obekti
     var counter = 0; // sluji za id
     const lines = data.split(/\r?\n/);    
     for (let i = 0; i < lines.length; i+=2) {
-    
         mySongs.push(new Songs(counter,lines[i+1],lines[i]));
         counter++;       
     }
     console.log(mySongs);
-
 } catch (err) {
     console.error(err);
 }
-
-
 
 client.once("ready", () => {
   console.log("Ready!");
@@ -60,12 +53,8 @@ client.on("message", async message => {
   //if (!message.content.startsWith(prefix)) return;
 
   const serverQueue = queue.get(message.guild.id);
- 
- 
-
+  
   //TODO: nastroeniq
-  
-  
 
   if (message.content.startsWith(`${prefix}pusni skandau`)) {
     execute(message, serverQueue,false);
@@ -78,7 +67,7 @@ client.on("message", async message => {
     return;
   }   
     else if (message.content.startsWith(`${prefix}help`)){
-            message.channel.send(welcomeScreen.Suzdateli + '\n' +welcomeScreen.Komandi);
+        message.channel.send(welcomeScreen.Suzdateli + '\n' +welcomeScreen.Komandi);
     }
   
     else if(checkCavierStatus == true){
@@ -108,12 +97,12 @@ async function execute(message, serverQueue,isCavier) {
     );
   }
 
- if(isCavier == false){
- var songInfo = await ytdl.getInfo(mySongs[Math.floor(Math.random()* mySongs.length)].link);
- }
- else if (isCavier == true){
- var songInfo = await ytdl.getInfo(mySongs[0].link);
-}
+  if(isCavier == false) {
+    var songInfo = await ytdl.getInfo(mySongs[Math.floor(Math.random()* mySongs.length)].link);
+  }
+  else if (isCavier == true) {
+    var songInfo = await ytdl.getInfo(mySongs[0].link);
+  }
   
   const song = {
     title: songInfo.title,
