@@ -1,0 +1,26 @@
+{
+  "name": "skandau-discord-bot",
+  "version": "1.0.0",
+  "description": "skandau chat bot",
+  "main": "index.js",
+  "dependencies": {
+    "discord.js": "^12.2.0",
+    "fluent-ffmpeg": "^2.1.2",
+    "ffmpeg": "^0.0.4",
+    "ytdl-core": "^2.1.7"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yordanzhelevdev/skandau-discord-bot.git"
+  },
+  "author": "Yordan Zhelev, Ivan Dukov",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/yordanzhelevdev/skandau-discord-bot/issues"
+  },
+  "homepage": "https://github.com/yordanzhelevdev/skandau-discord-bot#readme"
+}
