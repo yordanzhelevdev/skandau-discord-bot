@@ -1,10 +1,41 @@
 const Discord = require("discord.js");
 const { prefix, token } = require("./config.json"); //vzima prefixa ot config faila.
 const ytdl = require("ytdl-core");
+var fs = require("fs");
 
+var welcomeScreen = {
+    Suzdateli: "Suzdaden ot Yordan Zheleff i Ivan Dukov",
+    Komandi: "Vuzmojnite komandi sa : \n!!pusni skandau \n!!skip  \n!!stop"
+}
 const client = new Discord.Client();
-
 const queue = new Map();
+
+
+
+  function Songs(id,name,link) {
+    this.id = id;
+    this.name = name;
+    this.link = link;
+  }
+
+try {
+   
+    const data = fs.readFileSync('database.conf', 'UTF-8');
+    var mySongs = []; // array ot songs obekti
+    var counter = 0; // sluji za id
+    const lines = data.split(/\r?\n/);    
+    for (let i = 0; i < lines.length; i+=2) {
+    
+        mySongs.push(new Songs(counter,lines[i+1],lines[i]));
+        counter++;       
+    }
+    console.log(mySongs);
+
+} catch (err) {
+    console.error(err);
+}
+
+
 
 client.once("ready", () => {
   console.log("Ready!");
@@ -18,33 +49,52 @@ client.once("disconnect", () => {
   console.log("Disconnect!");
 });
 
+var checkCavierStatus;
+
 client.on("message", async message => {
-  if (message.author.bot) return;
-  if (!message.content.startsWith(prefix)) return;
+    if (message.content === 'oaoeo') {
+        message.channel.send('OAOEO.')
+        checkCavierStatus = true;
+    }
+    if (message.author.bot) return;
+  //if (!message.content.startsWith(prefix)) return;
 
   const serverQueue = queue.get(message.guild.id);
+ 
+ 
 
-  
   //TODO: nastroeniq
   
-  if (message.content.startsWith(`${prefix}play`)) {
-    execute(message, serverQueue);
+  
+
+  if (message.content.startsWith(`${prefix}pusni skandau`)) {
+    execute(message, serverQueue,false);
     return;
   } else if (message.content.startsWith(`${prefix}skip`)) {
-    skip(message, serverQueue);
+    skip(message, serverQueue,false);
     return;
   } else if (message.content.startsWith(`${prefix}stop`)) {
-    stop(message, serverQueue);
+    stop(message, serverQueue,false);
     return;
-  } else {
+  }   
+    else if (message.content.startsWith(`${prefix}help`)){
+            message.channel.send(welcomeScreen.Suzdateli + '\n' +welcomeScreen.Komandi);
+    }
+  
+    else if(checkCavierStatus == true){
+        execute(message, serverQueue,true);
+        return;
+      } 
+   else {
     message.channel.send("You need to enter a valid command!");
   }
 });
 
-async function execute(message, serverQueue) {
+async function execute(message, serverQueue,isCavier) {
   const args = message.content.split(" ");
 
   console.log(args);
+  console.log(isCavier);
 
   const voiceChannel = message.member.voice.channel;
   if (!voiceChannel)
@@ -58,16 +108,12 @@ async function execute(message, serverQueue) {
     );
   }
 
-  const skandauSongs = ['https://www.youtube.com/watch?v=M7KOMNDfims', 'https://www.youtube.com/watch?v=tKCgZa5VNn8','https://www.youtube.com/watch?v=loZJIzpZgS4','https://www.youtube.com/watch?v=f7DTcG0lFDo'];
-
-  const randomSong = skandauSongs[Math.floor(Math.random() * skandauSongs.length)];
-
-  // Math.floor(Math.random() * skandauSongs.length)
-  console.log(randomSong);
-  const songInfo = await ytdl.getInfo(randomSong);
-
-  // ['!!play', 'https://www.youtube.com/watch?v=M7KOMNDfims']
- 
+ if(isCavier == false){
+ var songInfo = await ytdl.getInfo(mySongs[Math.floor(Math.random()* mySongs.length)].link);
+ }
+ else if (isCavier == true){
+ var songInfo = await ytdl.getInfo(mySongs[0].link);
+}
   
   const song = {
     title: songInfo.title,
