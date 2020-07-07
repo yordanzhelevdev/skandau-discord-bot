@@ -1,8 +1,8 @@
 const Discord = require("discord.js");
 const { prefix, token } = require("./config.json"); //vzima prefixa ot config faila.
 const ytdl = require("ytdl-core");
-const yts = require('yt-search');
-var songs = require("./allSongs.js");
+const yts = require("yt-search");
+const allSongs = require("./allSongs.js").allSongs;
 var fs = require("fs");
 
 const client = new Discord.Client();
@@ -12,26 +12,6 @@ var welcomeScreen = {
     Suzdateli: "Suzdaden ot Yordan Zheleff i Ivan Dukov",
     Komandi: "Vuzmojnite komandi sa : \n!!pusni skandau \n!!skip  \n!!stop",
 };
-
-// function Songs(id, name, link) {
-//     this.id = id;
-//     this.name = name;
-//     this.link = link;
-// }
-
-// try {
-//     const data = fs.readFileSync("database.conf", "UTF-8");
-//     var mySongs = []; // array ot songs obekti
-//     var counter = 0; // sluji za id
-//     const lines = data.split(/\r?\n/);
-//     for (let i = 0; i < lines.length; i += 2) {
-//         mySongs.push(new Songs(counter, lines[i + 1], lines[i]));
-//         counter++;
-//     }
-//     console.log(mySongs);
-// } catch (err) {
-//     console.error(err);
-// }
 
 // Client events
 client.once("ready", () => {
@@ -46,17 +26,17 @@ client.once("disconnect", () => {
     console.log("Disconnect!");
 });
 
-var checkCavierStatus;
+let checkCavierStatus;
 
 client.on("message", async (message) => {
-    
     if (message.content === "oaoeo") {
         message.channel.send("OAOEO.");
         checkCavierStatus = true;
     }
 
     if (message.author.bot) return;
-    // if (!message.content.startsWith(prefix)) return;
+    if (!message.content.startsWith(prefix) && !message.content !== "oaoeo")
+        return;
 
     const serverQueue = queue.get(message.guild.id);
 
@@ -98,31 +78,21 @@ async function execute(message, serverQueue, isCavier) {
         );
     }
 
-    const songs = [
-        "Skandau-Haivera",
-        "Skandau-Replay",
-        "Skandau i Deo - Ot Yuli do Avgust",
-        "Skandau - Maika mu stara",
-        "Skandau - Ot spomen do rana",
-        "Toto H - Chujdi usmivki",
-        "Skandau - Do moreto",
-        "Skandau feat Charlie - No",
-        "Skandau - Kokaina",
-        "Skandau - Kolio Ficheto",
-    ];
+    //To do: To fix oaoeo command
 
-    let randomSong = songs[Math.floor(Math.random() * songs.length)];
-    
+    // Get random song
+    let randomSong = allSongs[Math.floor(Math.random() * allSongs.length)];
+
+    //Search that random song in YT
     let randomSongUrl = await yts(randomSong).then(function (result) {
         return result.videos[0].url;
     });
 
-    console.log(randomSongUrl);
-
+    let songInfo;
     if (isCavier == false) {
-        var songInfo = await ytdl.getInfo(randomSongUrl);
+        songInfo = await ytdl.getInfo(randomSongUrl);
     } else if (isCavier == true) {
-        var songInfo = await ytdl.getInfo(mySongs[0].link);
+        songInfo = await ytdl.getInfo(allSongs[0]);
     }
 
     const song = {
@@ -268,7 +238,7 @@ client.login(token);
 //     //     "Skandau - Kokaina",
 //     //     "Skandau - Kolio Ficheto"
 //     // ];
-    
+
 //     let getRandomSongName = songs[Math.floor(Math.random() * songs.length)];
 
 //     console.log(getRandomSongName);

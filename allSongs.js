@@ -1,4 +1,4 @@
-exports.songs = [
+const allSongs = [
     'Skandau-Haivera',
     'Skandau-Replay',
     'Skandau i Deo - Ot Yuli do Avgust',
@@ -10,3 +10,5 @@ exports.songs = [
     'Skandau - Kokaina',
     'Skandau - Kolio Ficheto'
 ];
+
+exports.allSongs = allSongs;
